@@ -8,7 +8,7 @@ mqtt:
 
 auth:
   enabled: true
-  reset_admin_password: true
+  reset_admin_password: false
 
 detectors:
   ov:
