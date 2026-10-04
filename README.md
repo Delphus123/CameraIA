@@ -22,12 +22,15 @@ O Frigate é um NVR open source que roda em Docker e faz **detecção de objetos
   - Limite: J3455 modesto — piloto 4–6 câmeras @5fps no sub-stream, escalar monitorando CPU
   - Gravações do Frigate → storage local do próprio NAS
 - [ ] Instalar Container Station no QTS (se ainda não tiver)
-- [ ] Criar usuário Frigate no DVR e testar RTSP de 1 canal pela rede
+- [x] Criar usuário Frigate no DVR e testar RTSP — **RTSP :554 aberto e autenticando OK (26/09)**; sem imagem porque a **fonte 12V das câmeras queimou** (bloqueio físico pendente). O `Connection reset` nos canais era canal sem vídeo.
+- [ ] **Trocar fonte 12V do sistema de câmeras** (bloqueio físico — câmeras off)
+- [ ] Revalidar RTSP com câmeras ligadas (`ffprobe rtsp://frigate:...@192.168.2.182/Streaming/Channels/101`)
 
 ### Fase 1 — Prova de conceito
-- [ ] Instalar Frigate via Docker Compose (+ broker MQTT Mosquitto)
-- [ ] Conectar 1 câmera RTSP com **dois streams**: sub-stream 720p@5fps p/ detectar, stream principal p/ gravar
-- [ ] Detecção de pessoa ao vivo validada
+- [x] Arquivos de deploy prontos no repo: `frigate/docker-compose.yml` (Frigate + Mosquitto, /dev/dri, pastas /share/Container/frigate) e `frigate/config.yml` (OpenVINO GPU, VAAPI, 4 câmeras piloto, detect 704x480@5fps no sub-stream, retain motion 14d/eventos 30d)
+- [ ] No NAS: criar pastas `/share/Container/frigate/{config.yml,media,db,mosquitto}` e subir `docker compose up -d`
+- [ ] Validar detecção de pessoa ao vivo
+- [ ] Ajustar zonas (`required_zones`) e máscaras
 
 ### Fase 2 — Refinamento
 - [ ] Criar **zonas** (`required_zones`) — elimina mais falsos alertas que trocar de hardware

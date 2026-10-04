@@ -1,0 +1,86 @@
+# Frigate — TS-453Be + DVR Hikvision DS-7216HQHI-K2 (16ch HDTVI)
+# Piloto: 4 primeiras câmeras. Detector: OpenVINO na iGPU HD 500.
+# Ao adicionar câmera: copiar bloco cam_XX e trocar o N de Channels/N01 e N02.
+
+mqtt:
+  enabled: true
+  host: mqtt
+
+detectors:
+  ov:
+    type: openvino
+    device: GPU # iGPU HD 500 (Gen9)
+    model:
+      path: /openvino-model/ssdlite_mobilenet_v2.xml
+      model_type: ssd
+
+ffmpeg:
+  hwaccel_args: preset-vaapi
+
+record:
+  enabled: true
+  retain:
+    days: 14
+    mode: motion
+  events:
+    retain:
+      default: 30
+
+objects:
+  track:
+    - person
+    - car
+
+cameras:
+  cam_1:
+    ffmpeg:
+      inputs:
+        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/102
+          input_args: preset-rtsp-tcp
+          roles: [detect]
+        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/101
+          input_args: preset-rtsp-tcp
+          roles: [record]
+    detect:
+      width: 704
+      height: 480
+      fps: 5
+  cam_2:
+    ffmpeg:
+      inputs:
+        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/202
+          input_args: preset-rtsp-tcp
+          roles: [detect]
+        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/201
+          input_args: preset-rtsp-tcp
+          roles: [record]
+    detect:
+      width: 704
+      height: 480
+      fps: 5
+  cam_3:
+    ffmpeg:
+      inputs:
+        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/302
+          input_args: preset-rtsp-tcp
+          roles: [detect]
+        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/301
+          input_args: preset-rtsp-tcp
+          roles: [record]
+    detect:
+      width: 704
+      height: 480
+      fps: 5
+  cam_4:
+    ffmpeg:
+      inputs:
+        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/402
+          input_args: preset-rtsp-tcp
+          roles: [detect]
+        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/401
+          input_args: preset-rtsp-tcp
+          roles: [record]
+    detect:
+      width: 704
+      height: 480
+      fps: 5
