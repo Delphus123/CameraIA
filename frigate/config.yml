@@ -34,12 +34,18 @@ objects:
 cameras:
   cam_1:
     ffmpeg:
+      output_args:
+        record: preset-record-generic
       inputs:
         - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/102
-          input_args: preset-rtsp-tcp
+          input_args:
+          - -rtsp_transport
+          - tcp
           roles: [detect]
         - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/101
-          input_args: preset-rtsp-tcp
+          input_args:
+          - -rtsp_transport
+          - tcp
           roles: [record]
     detect:
       width: 704
@@ -47,12 +53,18 @@ cameras:
       fps: 5
   cam_2:
     ffmpeg:
+      output_args:
+        record: preset-record-generic
       inputs:
         - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/202
-          input_args: preset-rtsp-tcp
+          input_args:
+          - -rtsp_transport
+          - tcp
           roles: [detect]
         - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/201
-          input_args: preset-rtsp-tcp
+          input_args:
+          - -rtsp_transport
+          - tcp
           roles: [record]
     detect:
       width: 704
@@ -60,12 +72,18 @@ cameras:
       fps: 5
   cam_3:
     ffmpeg:
+      output_args:
+        record: preset-record-generic
       inputs:
         - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/302
-          input_args: preset-rtsp-tcp
+          input_args:
+          - -rtsp_transport
+          - tcp
           roles: [detect]
         - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/301
-          input_args: preset-rtsp-tcp
+          input_args:
+          - -rtsp_transport
+          - tcp
           roles: [record]
     detect:
       width: 704
@@ -73,12 +91,18 @@ cameras:
       fps: 5
   cam_4:
     ffmpeg:
+      output_args:
+        record: preset-record-generic
       inputs:
         - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/402
-          input_args: preset-rtsp-tcp
+          input_args:
+          - -rtsp_transport
+          - tcp
           roles: [detect]
         - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/401
-          input_args: preset-rtsp-tcp
+          input_args:
+          - -rtsp_transport
+          - tcp
           roles: [record]
     detect:
       width: 704
