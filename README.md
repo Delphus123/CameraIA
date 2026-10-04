@@ -10,19 +10,19 @@ O Frigate é um NVR open source que roda em Docker e faz **detecção de objetos
 
 ## Roadmap
 
-### Fase 0 — Avaliar o hardware atual ✅ primeiro passo
-- [x] **DVR existente: Hikvision DS-7216HQHI-K2** (16ch BNC HDTVI/AHD/CVI/CVBS + até 8 IP, 6 MP, RTSP na porta 554, LAN gigabit)
-  - As câmeras coaxiais atuais continuam nos BNC — o DVR as expõe via RTSP:
+### Fase 0 — Avaliar o hardware ✅ CONCLUÍDA (26/09/26)
+- [x] **DVR: Hikvision DS-7216HQHI-K2** (16ch BNC HDTVI/AHD/CVI/CVBS + até 8 IP, 6 MP, RTSP :554, LAN gigabit)
+  - Câmeras coaxiais permanecem nos BNC; DVR as expõe via RTSP:
     main `rtsp://user:pass@IP:554/Streaming/Channels/N01` · sub `...N02`
   - Criar usuário dedicado no DVR para o Frigate (sem privilégios de admin)
-  - O DVR segue como gravador; Frigate adiciona IA por cima
-- [ ] Inventariar o hardware disponível para o Frigate (mini PC / Raspberry Pi / PC velho)
-- [ ] Verificar CPU: Intel ≥ 6ª geração? → detector **OpenVINO na iGPU** (recomendado, zero custo extra)
-- [ ] Verificar GPU dedicada NVIDIA/AMD? → detector **ONNX**
-- [ ] Sem acelerador e consumo for restrição rígida? → **Coral USB** (só como reserva; não é mais o padrão)
-- [ ] Testar decodificação de vídeo por hardware (VAAPI/QSV/NVDEC) — o Coral só acelera a IA, não o decode
-- [ ] Mínimo prático: CPU x86, 8 GB RAM (16 GB p/ busca semântica), SSD/NAS p/ gravações
-- [ ] **Evitar detector `cpu` puro** — OpenVINO em modo CPU já é mais eficiente
+  - DVR segue como gravador oficial; Frigate adiciona IA por cima
+- [x] **Host do Frigate: QNAP TS-453Be** (Celeron J3455 4-core, 16 GB RAM, iGPU HD 500, 4 baias)
+  - x86 + Container Station (Docker) ✅ · OpenVINO na iGPU Gen9 ✅ · VAAPI/QSV ✅
+  - 16 GB = Frigate + QTS + busca semântica com folga
+  - Limite: J3455 modesto — piloto 4–6 câmeras @5fps no sub-stream, escalar monitorando CPU
+  - Gravações do Frigate → storage local do próprio NAS
+- [ ] Instalar Container Station no QTS (se ainda não tiver)
+- [ ] Criar usuário Frigate no DVR e testar RTSP de 1 canal pela rede
 
 ### Fase 1 — Prova de conceito
 - [ ] Instalar Frigate via Docker Compose (+ broker MQTT Mosquitto)
