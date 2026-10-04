@@ -6,6 +6,10 @@ mqtt:
   enabled: true
   host: mqtt
 
+auth:
+  enabled: true
+  reset_admin_password: true
+
 detectors:
   ov:
     type: openvino
