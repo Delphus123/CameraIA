@@ -21,7 +21,7 @@ services:
       - /dev/dri:/dev/dri # iGPU Intel HD 500 → OpenVINO GPU + VAAPI
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /share/Container/frigate/config.yml:/config/config.yml
+      - /share/Container/frigate/configdir:/config
       - /share/Container/frigate/media:/media/frigate # gravações/clipes no NAS
       - /share/Container/frigate/db:/db
     ports:
