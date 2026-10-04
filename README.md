@@ -11,7 +11,12 @@ O Frigate é um NVR open source que roda em Docker e faz **detecção de objetos
 ## Roadmap
 
 ### Fase 0 — Avaliar o hardware atual ✅ primeiro passo
-- [ ] Inventariar o hardware disponível na rede (mini PC / Raspberry Pi / NAS / PC velho)
+- [x] **DVR existente: Hikvision DS-7216HQHI-K2** (16ch BNC HDTVI/AHD/CVI/CVBS + até 8 IP, 6 MP, RTSP na porta 554, LAN gigabit)
+  - As câmeras coaxiais atuais continuam nos BNC — o DVR as expõe via RTSP:
+    main `rtsp://user:pass@IP:554/Streaming/Channels/N01` · sub `...N02`
+  - Criar usuário dedicado no DVR para o Frigate (sem privilégios de admin)
+  - O DVR segue como gravador; Frigate adiciona IA por cima
+- [ ] Inventariar o hardware disponível para o Frigate (mini PC / Raspberry Pi / PC velho)
 - [ ] Verificar CPU: Intel ≥ 6ª geração? → detector **OpenVINO na iGPU** (recomendado, zero custo extra)
 - [ ] Verificar GPU dedicada NVIDIA/AMD? → detector **ONNX**
 - [ ] Sem acelerador e consumo for restrição rígida? → **Coral USB** (só como reserva; não é mais o padrão)
