@@ -21,6 +21,9 @@ O Frigate é um NVR open source que roda em Docker e faz **detecção de objetos
   - 16 GB = Frigate + QTS + busca semântica com folga
   - Limite: J3455 modesto — piloto 4–6 câmeras @5fps no sub-stream, escalar monitorando CPU
   - Gravações do Frigate → storage local do próprio NAS
+  - **Acesso à interface via Tailscale:** `https://100.114.5.31:8971`
+  - Acesso local alternativo: `https://192.168.2.170:8971`
+  - A porta `8971` usa HTTPS; o certificado inicial é autoassinado
 - [ ] Instalar Container Station no QTS (se ainda não tiver)
 - [x] Criar usuário Frigate no DVR e testar RTSP — **RTSP :554 aberto e autenticando OK (26/09)**; sem imagem porque a **fonte 12V das câmeras queimou** (bloqueio físico pendente). O `Connection reset` nos canais era canal sem vídeo.
 - [ ] **Trocar fonte 12V do sistema de câmeras** (bloqueio físico — câmeras off)
