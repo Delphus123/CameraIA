@@ -52,6 +52,7 @@ cameras:
           - tcp
           roles: [record]
     detect:
+      enabled: true
       width: 704
       height: 480
       fps: 5
@@ -71,6 +72,7 @@ cameras:
           - tcp
           roles: [record]
     detect:
+      enabled: true
       width: 704
       height: 480
       fps: 5
@@ -90,6 +92,7 @@ cameras:
           - tcp
           roles: [record]
     detect:
+      enabled: true
       width: 704
       height: 480
       fps: 5
@@ -109,6 +112,7 @@ cameras:
           - tcp
           roles: [record]
     detect:
+      enabled: true
       width: 704
       height: 480
       fps: 5
