@@ -13,7 +13,7 @@ auth:
 detectors:
   ov:
     type: openvino
-    device: GPU # iGPU HD 500 (Gen9)
+    device: CPU # iGPU HD500 disputada com Jellyfin causava stall do detector + watchdog kill; CPU é estável p/ 4 cams @5fps
     model:
       path: /openvino-model/ssdlite_mobilenet_v2.xml
       model_type: ssd
