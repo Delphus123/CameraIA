@@ -41,12 +41,7 @@ cameras:
           input_args:
           - -rtsp_transport
           - tcp
-          roles: [detect]
-        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/101
-          input_args:
-          - -rtsp_transport
-          - tcp
-          roles: [record]
+          roles: [detect, record]
     detect:
       enabled: true
       width: 704
@@ -61,12 +56,7 @@ cameras:
           input_args:
           - -rtsp_transport
           - tcp
-          roles: [detect]
-        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/201
-          input_args:
-          - -rtsp_transport
-          - tcp
-          roles: [record]
+          roles: [detect, record]
     detect:
       enabled: true
       width: 704
@@ -81,12 +71,7 @@ cameras:
           input_args:
           - -rtsp_transport
           - tcp
-          roles: [detect]
-        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/301
-          input_args:
-          - -rtsp_transport
-          - tcp
-          roles: [record]
+          roles: [detect, record]
     detect:
       enabled: true
       width: 704
@@ -101,12 +86,7 @@ cameras:
           input_args:
           - -rtsp_transport
           - tcp
-          roles: [detect]
-        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/401
-          input_args:
-          - -rtsp_transport
-          - tcp
-          roles: [record]
+          roles: [detect, record]
     detect:
       enabled: true
       width: 704
