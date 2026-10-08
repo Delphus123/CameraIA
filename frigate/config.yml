@@ -44,7 +44,7 @@ cameras:
           roles: [detect, record]
     detect:
       enabled: true
-      width: 704
+      width: 640
       height: 480
       fps: 5
   cam_2:
@@ -59,7 +59,7 @@ cameras:
           roles: [detect, record]
     detect:
       enabled: true
-      width: 704
+      width: 640
       height: 480
       fps: 5
   cam_3:
@@ -74,7 +74,7 @@ cameras:
           roles: [detect, record]
     detect:
       enabled: true
-      width: 704
+      width: 640
       height: 480
       fps: 5
   cam_4:
@@ -89,6 +89,6 @@ cameras:
           roles: [detect, record]
     detect:
       enabled: true
-      width: 704
+      width: 640
       height: 480
       fps: 5

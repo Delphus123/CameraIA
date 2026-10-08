@@ -16,7 +16,7 @@ services:
     container_name: frigate
     restart: unless-stopped
     privileged: true # acesso à iGPU e shm
-    shm_size: "256mb" # ajustar: ~3x resolução detecção (320px) por câmera — 16 câmeras cabem
+    shm_size: "512mb" # ajustar: ~3x resolução detecção (320px) por câmera — 16 câmeras cabem
     healthcheck:
       test: ["CMD-SHELL", "test -f /dev/shm/.frigate-is-stopping && exit 0; curl --fail --silent --show-error http://127.0.0.1:5000/api/version || exit 1"]
       interval: 60s
