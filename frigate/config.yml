@@ -13,7 +13,14 @@ auth:
 detectors:
   ov:
     type: openvino
-    device: CPU # sem model custom — default 0.18 (320x320); o ssdlite antigo 300x300 crashava toda detecção (watchdog kill loop)
+    device: CPU
+    model:
+      path: /openvino-model/ssdlite_mobilenet_v2.xml
+      labelmap_path: /openvino-model/coco_91cl_bkgr.txt
+      width: 300
+      height: 300
+      input_tensor: nhwc
+      input_pixel_format: bgr
 
 # decode por CPU (padrão) — VAAPI na iGPU HD500 compartilhada c/ Jellyfin causava erros -38 intermitentes
 
