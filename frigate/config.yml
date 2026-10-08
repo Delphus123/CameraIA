@@ -16,7 +16,7 @@ detectors:
     device: CPU # sem model custom — default 0.18 (320x320); o ssdlite antigo 300x300 crashava toda detecção (watchdog kill loop)
 
 ffmpeg:
-  hwaccel_args: preset-vaapi
+  # decode por CPU — VAAPI na iGPU HD500 compartilhada c/ Jellyfin causava erros -38 intermitentes
 
 record:
   enabled: true
