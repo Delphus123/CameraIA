@@ -10,17 +10,18 @@ auth:
   enabled: true
   reset_admin_password: false
 
+model:
+  path: /openvino-model/ssdlite_mobilenet_v2.xml
+  labelmap_path: /openvino-model/coco_91cl_bkgr.txt
+  width: 300
+  height: 300
+  input_tensor: nhwc
+  input_pixel_format: bgr
+
 detectors:
   ov:
     type: openvino
     device: CPU
-    model:
-      path: /openvino-model/ssdlite_mobilenet_v2.xml
-      labelmap_path: /openvino-model/coco_91cl_bkgr.txt
-      width: 300
-      height: 300
-      input_tensor: nhwc
-      input_pixel_format: bgr
 
 # decode por CPU (padrão) — VAAPI na iGPU HD500 compartilhada c/ Jellyfin causava erros -38 intermitentes
 
