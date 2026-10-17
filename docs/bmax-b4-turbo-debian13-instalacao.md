@@ -164,14 +164,55 @@ sudo systemctl restart docker
 
 ### 6.3 NFS (gravações do Frigate + biblioteca Jellyfin no NAS)
 
+**No QTS (obrigatório, via GUI)** — regra de NFS host access no share
+`Container` (Control Panel → Privilege Settings → Shared Folders → Container
+→ Edit → Permissions → NFS host access):
+
+- **IP/network:** `192.168.2.174` (o BMax)
+- **Privilege:** `read/write`
+- **Squash options:** **`no_users`** — este é o ponto crítico. `all_users`
+  (`all_squash`) e `root_users` (`root_squash`) mapeiam o root do container do
+  Frigate para `nobody` e a gravação falha com Permission denied. Só
+  `no_users` deixa o root gravar como root.
+- Apply na janela **e** Apply de novo em Win/Mac/NFS → NFS service (o segundo
+  Apply é o que regenera o `/etc/exports` via `gen_exports`).
+
+**No BMax:**
+
 ```bash
 sudo apt install nfs-common
-# /etc/fstab — ajustar exports conforme o QNAP
+# /etc/fstab
 192.168.2.170:/Container/frigate/media  /mnt/frigate-media  nfs4  _netdev,x-systemd.automount,x-systemd.idle-timeout=60,noatime  0  0
 sudo mkdir -p /mnt/frigate-media && sudo systemctl daemon-reload && sudo mount -a
 ```
 
 O `x-systemd.automount` evita boot travado se o NAS estiver fora do ar.
+Validação: `touch /mnt/frigate-media/.t` como root e apagar — se der
+Permission denied, o squash do QTS está errado.
+
+### 6.3a Lição do rollout — rename de subvolume x GRUB
+
+O instalador do Debian cria o root como subvolume `@rootfs` e o GRUB
+(UEFI, `grubx64.efi`) embute o prefixo apontando pra `@rootfs/boot/grub`.
+**Renomear o subvolume quebra o boot** (a máquina cai no `grub>`).
+Depois de renomear `@rootfs` → `@`, rodar SEMPRE:
+
+```bash
+sudo grub-install /dev/sda && sudo update-grub
+```
+
+Boot manual de emergência no `grub>` (funciona com o prefixo quebrado):
+
+```
+search.fs_uuid 4fba3a0e-5ace-4da2-9ea8-7a5986d7d537 root
+linux ($root)/@/boot/vmlinuz-<versao> root=UUID=4fba3a0e-5ace-4da2-9ea8-7a5986d7d537 rootflags=subvol=@ ro quiet
+initrd ($root)/@/boot/initrd.img-<versao>
+boot
+```
+
+Obs. desta máquina: mount por `UUID=` no fstab — usar o prefixo `UUID=`
+completo (UUID pelado como origem falha com "special device does not
+exist").
 
 ### 6.4 Snapshots: snapper + btrfs-assistant
 

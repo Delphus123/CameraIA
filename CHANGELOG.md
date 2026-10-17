@@ -4,6 +4,19 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.3.1] — 2026-10-17
+
+### Adicionado
+
+- Setup real do BMax concluído: árvore Btrfs corrigida (@/@home/@docker/@snapshots
+  no nível de topo, zstd+noatime), Docker CE + log rotation, QSV validado,
+  snapper, zram 8G, NFS do NAS montado em /mnt/frigate-media (91G visíveis).
+- Seção 6.3: passo a passo da regra NFS no QTS com o detalhe crítico do
+  squash (`no_users` — all/root squash quebra a gravação do Frigate).
+- Seção 6.3a: lição do rollout — rename de `@rootfs`→`@` quebra o prefixo
+  embutido do GRUB; `grub-install` + `update-grub` obrigatórios, com receita
+  de boot manual de emergência.
+
 ## [0.3.0] — 2026-10-17
 
 ### Alterado (breaking)
