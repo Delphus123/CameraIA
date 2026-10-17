@@ -4,6 +4,14 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.2.4] — 2026-10-17
+
+### Adicionado
+
+- Passo a passo: nota sobre boot inicial no Windows — licença OEM fica na
+  BIOS (nada a salvar); vale ligar para teste de garantia, conferir o S40G e
+  update de BIOS.
+
 ## [0.2.3] — 2026-10-17
 
 ### Adicionado

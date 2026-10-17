@@ -22,6 +22,13 @@ Resumo: sistema no S40G (NVMe) → precisa dele montado antes do instalador
 rodar. O instalador identifica os discos pelo modelo ("Spectrix S40G" vs
 SSD genérico), então com os dois presentes não há risco de disco errado.
 
+**Ligar no Windows uma vez antes de apagar?** Sim, mas não pela licença — a
+chave OEM fica na BIOS/motherboard e o Windows reativa sozinho numa futura
+reinstalação limpa. Vale o boot por 3 motivos: (1) testar hardware na janela
+de garantia (HDMI, Ethernet, Wi-Fi, fan); (2) confirmar que o S40G aparece no
+Gerenciador de Discos; (3) aplicar update de BIOS se houver (BMAX costuma
+distribuir só como .exe Windows). Depois disso, apagar sem culpa.
+
 | Tecla (apertar repetidamente ao ligar) | O que abre |
 |---|---|
 | **F11** | **Menu de boot** (escolher o pendrive) — é esta que você quer |
