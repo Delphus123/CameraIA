@@ -4,6 +4,19 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.3.0] — 2026-10-17
+
+### Alterado (breaking)
+
+- Hardware real = BMax B4 **Turbo** (não Ultra): sem slot NVMe. Guia e passo
+  a passo reescritos para disco único SATA: sistema em Btrfs no SSD de
+  fábrica, S40G fora da máquina, bay 2.5" como reserva.
+
+### Adicionado
+
+- Seção 6.6: otimizações Turbo (BIOS State After G3→S0, log rotation do
+  Docker 10m×3, fstrim, Wi-Fi off, governor padrão).
+
 ## [0.2.4] — 2026-10-17
 
 ### Adicionado
