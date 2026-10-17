@@ -4,6 +4,24 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.3.3] — 2026-10-17
+
+### Alterado
+
+- **Cutover concluído**: o Frigate de produção deixou o QNAP TS-453Be e roda no
+  BMax B4 Turbo (`/opt/frigate`, compose `frigate/docker-compose.bmax.yml`),
+  gravando no NFS do NAS (`/mnt/frigate-media` → `/media/frigate`). Container
+  `frigate` do QNAP parado (`Exited 137`) mantido como rollback.
+- Histórico preservado via cópia do `configdir` (3.145 eventos, 2 usuários,
+  `.jwt_secret`) — sem migração de banco e sem cópia das ~92G de gravações.
+
+### Validado
+
+- Frigate 0.18.2 healthy em ~45s, `RestartCount=0`; 4/4 câmeras em
+  `camera_fps` 5,1 com `skipped_fps` 0; detector OpenVINO CPU ~17ms (vs ~170ms
+  no J3455); 185 segmentos novos em 15 min no NFS; evento de `person` novo
+  tocável via `/api/events/<id>/clip.mp4`.
+
 ## [0.3.2] — 2026-10-17
 
 ### Adicionado
