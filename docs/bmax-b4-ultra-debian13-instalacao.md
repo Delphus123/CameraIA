@@ -109,6 +109,10 @@ camadas de imagem Docker e logs.
    NÃO marcar "web server", "print server" etc.
 7. GRUB: instalar no disco primário (NVMe).
 
+> Senha do root: recomendação atualizada — deixar **em branco** no instalador.
+> Com root em branco, o d-i bloqueia a conta root e adiciona o primeiro usuário
+> ao grupo `sudo` automaticamente (padrão mais limpo e auditável).
+
 ## 6. Pós-instalação (checklist obrigatório)
 
 ### 6.1 Repos e firmware
