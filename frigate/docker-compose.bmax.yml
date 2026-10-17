@@ -1,0 +1,47 @@
+# Frigate NVR — deploy no BMax B4 Turbo (Debian 13 + Docker CE) — v0.3.2
+# Uso: docker compose --env-file /opt/frigate/.env up -d
+#
+# Diferenças em relação ao compose do QNAP (frigate/docker-compose.yml):
+#  - Paths locais em /opt/frigate (root em Btrfs @, config/db no disco do BMax);
+#    a pasta de config vive FORA de /etc e dentro de /opt (fora de snapshots).
+#  - Gravações ficam NO NAS por NFS4: /mnt/frigate-media -> /media/frigate.
+#    O path DENTRO do container é idêntico ao do QNAP (/media/frigate), então as
+#    ~92G de gravações existentes são reaproveitadas sem cópia e sem migração de DB.
+#  - Detector segue OpenVINO em CPU (iGPU fica para o Jellyfin QSV).
+#  - shm_size 512mb + detect 640x480 (medido no J3455; no N150 sobra folga).
+
+services:
+  mqtt:
+    image: eclipse-mosquitto:2
+    container_name: mqtt
+    restart: unless-stopped
+    command: mosquitto -c /mosquitto-no-auth.conf
+    volumes:
+      - /opt/frigate/mosquitto:/mosquitto/data
+
+  frigate:
+    image: ghcr.io/blakeblackshear/frigate:stable
+    container_name: frigate
+    restart: unless-stopped
+    privileged: true             # acesso à iGPU e /dev/shm
+    shm_size: "512mb"
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /dev/shm/.frigate-is-stopping && exit 0; curl --fail --silent --show-error http://127.0.0.1:5000/api/version || exit 1"]
+      interval: 60s
+      timeout: 15s
+      retries: 5
+      start_period: 300s         # warm-up do OpenVINO
+    devices:
+      - /dev/dri:/dev/dri        # QSV disponível p/ Jellyfin; Frigate decodifica em CPU
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /opt/frigate/configdir:/config
+      - /mnt/frigate-media:/media/frigate   # NFS4 do QNAP (montado no host)
+    ports:
+      - "8971:8971"              # UI autenticada
+      - "5000:5000"              # API/UI interna sem auth (só LAN)
+      - "8554:8554"              # RTSP restream
+      - "8555:8555/tcp"          # WebRTC
+      - "8555:8555/udp"
+    environment:
+      FRIGATE_RTSP_PASSWORD: "${FRIGATE_RTSP_PASSWORD}"

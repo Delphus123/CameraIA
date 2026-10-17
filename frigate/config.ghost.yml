@@ -1,0 +1,34 @@
+# Config "fantasma" — sobe o Frigate no BMax SEM abrir sessão RTSP no DVR.
+# Objetivo: validar imagem, schema, modelo 300x300, OpenVINO CPU, UI/API e db
+# sem consumir sessões do DS-7216 (limite prático ~4) nem disputar a pasta NFS
+# com o Frigate que ainda roda no QNAP. Usado via CONFIG_FILE.
+
+mqtt:
+  enabled: false
+
+auth:
+  enabled: true
+  reset_admin_password: true
+
+model:
+  path: /openvino-model/ssdlite_mobilenet_v2.xml
+  labelmap_path: /openvino-model/coco_91cl_bkgr.txt
+  width: 300
+  height: 300
+  input_tensor: nhwc
+  input_pixel_format: bgr
+
+detectors:
+  ov:
+    type: openvino
+    device: CPU
+
+record:
+  enabled: false
+
+objects:
+  track:
+    - person
+    - car
+
+cameras: {}

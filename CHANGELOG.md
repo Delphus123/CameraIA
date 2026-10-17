@@ -4,6 +4,24 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.3.2] — 2026-10-17
+
+### Adicionado
+
+- `frigate/docker-compose.bmax.yml`: stack do Frigate para o BMax B4 Turbo —
+  config/db locais em `/opt/frigate`, gravações no NAS via NFS4
+  (`/mnt/frigate-media` → `/media/frigate`, mesmo path de dentro do container
+  do QNAP, então as ~92G existentes são reaproveitadas sem cópia), detector
+  OpenVINO em CPU e `/dev/dri` reservado ao Jellyfin.
+- `frigate/config.ghost.yml`: config sem câmeras para validar o host NOVO sem
+  abrir sessão RTSP no DS-7216 (limite prático ~4 sessões) e sem disputar a
+  pasta de gravações com o Frigate que ainda roda no QNAP.
+
+### Validado
+
+- Ghost boot no BMax: Frigate 0.18.2 healthy em ~45s, modelo 300x300 carregado
+  no OpenVINO CPU (inference ~10ms), SQLite criado, NFS com escrita root ok.
+
 ## [0.3.1] — 2026-10-17
 
 ### Adicionado
