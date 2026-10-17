@@ -6,6 +6,22 @@ e o pós-instalação imediato. Ter os dois abertos (papel ou celular) ajuda.
 
 ## 0. Antes de começar — teclas de boot do B4 Ultra
 
+### 0.0 Ordem física (FAZER ANTES DE GRAVAR O PENDRIVE)
+
+1. Abrir a tampa (4 parafusos Phillips) e instalar o **S40G no slot NVMe
+   vazio (PCIe 3.0 x2)** — parafusa no standoff; testar se a tampa fecha sem
+   forçar (altura de 8mm do dissipador é a única incógnita; se não couber,
+   plano B na seção 3.4).
+2. O SSD SATA de fábrica **fica onde está** (slot M.2 SATA) — ele será
+   apagado durante a instalação (vem com Windows, que não serve mais).
+3. Reconferir tudo antes de fechar: S40G no slot vazio, SATA no original,
+   nada solto. Fechar a tampa.
+4. **Só depois** disso: gravar o pendrive e ligar.
+
+Resumo: sistema no S40G (NVMe) → precisa dele montado antes do instalador
+rodar. O instalador identifica os discos pelo modelo ("Spectrix S40G" vs
+SSD genérico), então com os dois presentes não há risco de disco errado.
+
 | Tecla (apertar repetidamente ao ligar) | O que abre |
 |---|---|
 | **F11** | **Menu de boot** (escolher o pendrive) — é esta que você quer |
