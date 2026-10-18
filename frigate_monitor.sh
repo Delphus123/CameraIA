@@ -13,6 +13,7 @@
 
 FRIGATE_HOST="192.168.2.174"
 SSH_HOST="hal9000@192.168.2.174"
+SSH_PORT="2048"          # sshd do BMax NAO usa a 22 (padrao da casa: 2048)
 FRIGATE_API="http://${FRIGATE_HOST}:5000"
 NFS_PATH="/mnt/frigate-media"
 LOG_DIR="$HOME/logs"
@@ -30,7 +31,7 @@ STATE="/tmp/frigate_monitor_state"
 mkdir -p "$LOG_DIR"
 
 ssh_host() {
-  ssh -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new "$SSH_HOST" "$@" 2>/dev/null
+  ssh -p "$SSH_PORT" -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new "$SSH_HOST" "$@" 2>/dev/null
 }
 
 tg_send() {

@@ -4,6 +4,16 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.3.6] — 2026-10-17
+
+### Corrigido
+
+- Monitor falava com o BMax na porta 22 e passou a registrar `NA` em CPU/RAM
+  quando o sshd foi movido para a **2048** (padrão da casa). `SSH_PORT=2048`
+  no script.
+- Criado `~/.ssh/config` no Pi com os aliases `bmax`/`bmaxb4` (host, porta 2048,
+  usuário, chave), para não errar a porta em comandos manuais.
+
 ## [0.3.5] — 2026-10-17
 
 ### Adicionado
