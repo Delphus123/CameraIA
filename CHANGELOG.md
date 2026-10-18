@@ -4,6 +4,17 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.3.10] — 2026-10-18
+
+### Alterado
+
+- **Monitor local, sem SSH** (`frigate_monitor.sh`): com o Pi desativado, o
+  monitor roda no próprio BMax e lê as métricas do host direto de `/proc` —
+  removida a volta por `sshd@localhost` (dependência frágil: sshd caiu em
+  17/10 com Frigate saudável e o CSV virou NA sem alerta). Alerta de métricas
+  cegas repaginado para leitura local. Validado: collect com CPU/load/mem/4
+  câmeras, zero NA.
+
 ## [0.3.9] — 2026-10-18
 
 ### Adicionado

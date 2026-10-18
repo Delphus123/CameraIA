@@ -1,19 +1,18 @@
 #!/bin/bash
-# CameraIA — monitor de saúde do Frigate (BMax B4 Turbo) — v0.3.4
+# CameraIA — monitor de saúde do Frigate (BMax B4 Turbo) — v0.3.10
 # Coleta CPU/load/mem do BMax + stats do Frigate, alerta Telegram em anomalias,
 # e grava histórico local p/ relatório diário. Cron a cada 5 min.
 # Uso: frigate_monitor.sh collect  |  frigate_monitor.sh daily
 #
-# 17/10/26: Frigate migrado do QNAP p/ o BMax. A API agora é consultada DIRETO
-# por HTTP (porta 5000 aberta na LAN, sem auth) — sem SSH p/ o API. O SSH ao
-# BMax só serve para métricas do host (locale-independent: /proc/*).
+# 18/10/26: Pi desativado — monitor roda NO próprio BMax (v0.3.10): métricas do
+# host lidas direto de /proc, SEM SSH (a volta por sshd@localhost era dependência
+# frágil e custosa; lição 17/10: sshd caiu com Frigate saudável e o CSV virou NA).
+# Se um dia o Frigate voltar p/ outro host, reintroduzir o SSH aqui.
 #
-# ATENÇÃO: o path do medidor é o host do FRIGATE, não o NAS. Se um dia o
-# Frigate voltar pro QNAP, troque FRIGATE_HOST/SSH_HOST de volta.
+# ATENÇÃO: as métricas de host são da máquina onde este script roda — ele TEM
+# que rodar no host do Frigate.
 
-FRIGATE_HOST="192.168.2.174"
-SSH_HOST="hal9000@192.168.2.174"
-SSH_PORT="2048"          # sshd do BMax NAO usa a 22 (padrao da casa: 2048)
+FRIGATE_HOST="127.0.0.1"
 FRIGATE_API="http://${FRIGATE_HOST}:5000"
 NFS_PATH="/mnt/frigate-media"
 LOG_DIR="$HOME/logs"
@@ -30,8 +29,20 @@ STATE="/tmp/frigate_monitor_state"
 
 mkdir -p "$LOG_DIR"
 
-ssh_host() {
-  ssh -p "$SSH_PORT" -o BatchMode=yes -o ConnectTimeout=10 -o StrictHostKeyChecking=accept-new "$SSH_HOST" "$@" 2>/dev/null
+host_metrics() {
+  # CPU% (delta /proc/stat), load 5min, %mem usada, %livre no NFS — local, sem locale
+  read -r _ u1 n1 s1 i1 w1 q1 sq1 st1 _ < /proc/stat
+  sleep 2
+  read -r _ u2 n2 s2 i2 w2 q2 sq2 st2 _ < /proc/stat
+  local du=$(( (u2+n2+s2+i2+w2+q2+sq2+st2) - (u1+n1+s1+i1+w1+q1+sq1+st1) ))
+  local di=$(( (i2+w2) - (i1+w1) ))
+  local cpu=$(( du>0 ? 100*(du-di)/du : 0 ))
+  local load mem disk
+  load=$(cut -d' ' -f2 /proc/loadavg)
+  mem=$(awk '/MemTotal/{t=$2}/MemAvailable/{a=$2}END{printf "%d", (t-a)*100/t}' /proc/meminfo)
+  disk=$(df --output=pcent "$NFS_PATH" 2>/dev/null | tail -1 | tr -dc '0-9')
+  [ -z "$disk" ] && disk="NA" || disk=$(( 100 - disk ))
+  echo "$cpu $load $mem $disk"
 }
 
 tg_send() {
@@ -48,21 +59,8 @@ collect() {
 
   ts=$(date '+%Y-%m-%d %H:%M')
 
-  # ---- métricas do host do Frigate (Debian: /proc, sem depender de locale) ----
-  read -r cpu_pct load5 mem_pct disk_free <<< "$(ssh_host '
-    read -r _ u1 n1 s1 i1 w1 q1 sq1 st1 _ < /proc/stat
-    sleep 2
-    read -r _ u2 n2 s2 i2 w2 q2 sq2 st2 _ < /proc/stat
-    du=$(( (u2+n2+s2+i2+w2+q2+sq2+st2) - (u1+n1+s1+i1+w1+q1+sq1+st1) ))
-    di=$(( (i2+w2) - (i1+w1) ))
-    cpu=$(( du>0 ? 100*(du-di)/du : 0 ))
-    load=$(cut -d" " -f2 /proc/loadavg)
-    mem=$(awk "/MemTotal/{t=\$2}/MemAvailable/{a=\$2}END{printf \"%d\", (t-a)*100/t}" /proc/meminfo)
-    disk=$(df --output=pcent "'"$NFS_PATH"'" 2>/dev/null | tail -1 | tr -dc "0-9")
-    [ -z "$disk" ] && disk="NA"
-    [ -n "$disk" ] && disk=$(( 100 - disk ))
-    echo "$cpu $load $mem $disk"
-  ')"
+  # ---- métricas do host (local: /proc, sem depender de locale nem sshd) ----
+  read -r cpu_pct load5 mem_pct disk_free <<< "$(host_metrics)"
 
   # ---- stats do Frigate (HTTP direto na LAN) ----
   stats_json=$(curl -s --max-time 8 "${FRIGATE_API}/api/stats")
@@ -133,20 +131,21 @@ except Exception:
   fi
   echo "$cams_bad_count" > "${STATE}_cams"
 
-  # ---- alerta: métricas do host cegas (SSH ao BMax falhando) ----
+  # ---- alerta: métricas do host cegas (leitura /proc local falhando) ----
   # Lição 17/10: sshd do BMax caiu com o Frigate 100% saudável; o CSV virou NA
-  # em cpu/mem e ninguém foi avisado (só percebi ao tentar entrar).
-  local ssh_count
-  ssh_count=$(cat "${STATE}_ssh" 2>/dev/null || echo 0)
+  # em cpu/mem e ninguém foi avisado (só percebi ao tentar entrar). Hoje a
+  # leitura é local — se falhar aqui, o problema é sério no host.
+  local host_count
+  host_count=$(cat "${STATE}_ssh" 2>/dev/null || echo 0)
   if [ "${cpu_pct:-NA}" = "NA" ] || [ -z "${cpu_pct:-}" ]; then
-    ssh_count=$((ssh_count+1))
-    if [ "$ssh_count" = 3 ]; then
-      tg_send "⚠️ CameraIA: sem métricas do host há ~15 min (SSH ${SSH_HOST} falhando). O Frigate responde? $( [ "$up" = "1" ] && echo "sim, API ok — problema é o sshd" || echo "NÃO — verificar o host" )."
+    host_count=$((host_count+1))
+    if [ "$host_count" = 3 ]; then
+      tg_send "⚠️ CameraIA: sem métricas do host há ~15 min (leitura local de /proc falhando). O Frigate responde? $( [ "$up" = "1" ] && echo "sim, API ok" || echo "NÃO — verificar o host" )."
     fi
   else
-    ssh_count=0
+    host_count=0
   fi
-  echo "$ssh_count" > "${STATE}_ssh"
+  echo "$host_count" > "${STATE}_ssh"
 
   # ---- alerta: espaço no NFS de gravações ----
   local disk_count
