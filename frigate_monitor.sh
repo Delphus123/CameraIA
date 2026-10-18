@@ -132,6 +132,21 @@ except Exception:
   fi
   echo "$cams_bad_count" > "${STATE}_cams"
 
+  # ---- alerta: métricas do host cegas (SSH ao BMax falhando) ----
+  # Lição 17/10: sshd do BMax caiu com o Frigate 100% saudável; o CSV virou NA
+  # em cpu/mem e ninguém foi avisado (só percebi ao tentar entrar).
+  local ssh_count
+  ssh_count=$(cat "${STATE}_ssh" 2>/dev/null || echo 0)
+  if [ "${cpu_pct:-NA}" = "NA" ] || [ -z "${cpu_pct:-}" ]; then
+    ssh_count=$((ssh_count+1))
+    if [ "$ssh_count" = 3 ]; then
+      tg_send "⚠️ CameraIA: sem métricas do host há ~15 min (SSH ${SSH_HOST} falhando). O Frigate responde? $( [ "$up" = "1" ] && echo "sim, API ok — problema é o sshd" || echo "NÃO — verificar o host" )."
+    fi
+  else
+    ssh_count=0
+  fi
+  echo "$ssh_count" > "${STATE}_ssh"
+
   # ---- alerta: espaço no NFS de gravações ----
   local disk_count
   disk_count=$(cat "${STATE}_disk" 2>/dev/null || echo 0)

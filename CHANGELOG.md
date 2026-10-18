@@ -4,6 +4,22 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.3.5] — 2026-10-17
+
+### Adicionado
+
+- `jellyfin/docker-compose.bmax.yml`: stack do Jellyfin para o BMax (host network,
+  `/dev/dri` p/ Quick Sync, config/cache locais em `/opt/jellyfin`, mídia por NFS
+  em `/mnt/multimedia` → `/media/Videos` ro). Mantém os caminhos internos do QNAP
+  para o banco de bibliotecas continuar válido.
+- Monitor: alerta de "métricas do host cegas" quando o SSH ao BMax falha por
+  ~15 min (hoje o sshd caiu e o CSV só ficou `NA`, sem ninguém avisar).
+
+### Bloqueado
+
+- Deploy do Jellyfin depende de (1) sshd do BMax de volta no ar e (2) regra NFS
+  do share `Multimedia` → 192.168.2.174 pela GUI do QTS (só admin).
+
 ## [0.3.4] — 2026-10-17
 
 ### Alterado

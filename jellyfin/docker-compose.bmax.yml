@@ -1,0 +1,46 @@
+# Jellyfin — deploy no BMax B4 Turbo (Debian 13 + Docker CE)
+# Uso: docker compose -f /opt/jellyfin/docker-compose.bmax.yml up -d
+#
+# Paridade com o container do QNAP (migração 17/10/26):
+#  - network_mode: host (mesmo esquema do NAS; preserva DLNA/descoberta e a porta 8096)
+#  - /dev/dri para Quick Sync (N150: iGPU 24EU, decode AV1/HEVC/VP9)
+#  - MESMOS caminhos internos do QNAP (/config, /cache, /media/Videos) para o
+#    banco do Jellyfin continuar válido sem remapear bibliotecas no painel.
+#  - mídia SEMPRE no NAS por NFS4, montada em /mnt/multimedia (ro).
+#    Requer regra NFS do share "Multimedia" -> 192.168.2.174 (rw, squash no_users).
+#
+# NÃO subir com o Jellyfin do QNAP rodando ao mesmo tempo: os dois usariam o
+# MESMO banco se o config for montado do NAS. O config é copiado p/ o disco local
+# (/opt/jellyfin/config) justamente para evitar isso.
+
+services:
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      TZ: America/Sao_Paulo
+      # Trocar pelo IP Tailscale do BMax quando ele entrar na tailnet
+      JELLYFIN_PublishedServerUrl: "http://192.168.2.174:8096"
+      JELLYFIN_DATA_DIR: /config
+      JELLYFIN_CACHE_DIR: /cache
+      JELLYFIN_CONFIG_DIR: /config/config
+      JELLYFIN_LOG_DIR: /config/log
+      JELLYFIN_WEB_DIR: /jellyfin/jellyfin-web
+      JELLYFIN_FFMPEG: /usr/lib/jellyfin-ffmpeg/ffmpeg
+      XDG_CACHE_HOME: /cache
+      MALLOC_TRIM_THRESHOLD_: "131072"
+      LD_PRELOAD: /usr/lib/jellyfin/libjemalloc.so.2
+    devices:
+      - /dev/dri:/dev/dri          # Quick Sync (renderD128)
+    volumes:
+      - /opt/jellyfin/config:/config
+      - /opt/jellyfin/cache:/cache
+      - /mnt/multimedia:/media/Videos:ro   # NFS4 do QNAP (share Multimedia)
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8096/health || exit 1"]
+      interval: 60s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
