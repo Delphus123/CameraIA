@@ -4,6 +4,36 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.3.7] — 2026-10-17
+
+### Alterado
+
+- **Jellyfin migrado do QNAP para o BMax** (host network, `/dev/dri`, config
+  local em `/opt/jellyfin`): 1,9G de config copiados, 3.261 itens e 5
+  bibliotecas preservadas (Filmes, Shows, Documentarios, Livros e Cursos,
+  Series), mídia lida por NFS do share `Multimedia` (1,3T). QNAP com o
+  container parado (`Exited 0`) como rollback.
+
+### Corrigido
+
+- Volume do Jellyfin apontava para o share raiz (`/mnt/multimedia`), então o
+  container via as pastas erradas e a biblioteca ficava vazia; o correto é
+  `/mnt/multimedia/Videos`.
+- fstab do BMax: os dois NFS deixaram de usar `x-systemd.automount`. Com bind
+  mount de container o automount expira por inatividade e o container passa a
+  enxergar a pasta vazia por baixo do mount — sintoma idêntico a "arquivos
+  desapareceram". Agora são mounts permanentes com `nofail`.
+
+### Validado
+
+- Jellyfin 12.2.0 healthy em ~40s, `/health` 200, 500/500 itens amostrados do
+  banco existem no disco, LibraryMonitor assistindo as 5 pastas.
+- Transcode QSV no N150 com o ffmpeg do próprio Jellyfin: 1080p x264 → 720p
+  h264_qsv a 277 fps / **11,6× tempo real**; saída hevc_qsv e h264_qsv
+  confirmadas por ffprobe (1280×720).
+- Frigate segue saudável após a mudança de fstab: 4/4 câmeras em 5 fps e 63
+  segmentos novos em 3 min no NFS.
+
 ## [0.3.6] — 2026-10-17
 
 ### Corrigido

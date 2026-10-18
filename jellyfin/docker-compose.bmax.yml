@@ -37,7 +37,7 @@ services:
     volumes:
       - /opt/jellyfin/config:/config
       - /opt/jellyfin/cache:/cache
-      - /mnt/multimedia:/media/Videos:ro   # NFS4 do QNAP (share Multimedia)
+      - /mnt/multimedia/Videos:/media/Videos:ro   # NFS4 do QNAP: a montagem é do share Multimedia, a biblioteca é a subpasta Videos
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8096/health || exit 1"]
       interval: 60s
