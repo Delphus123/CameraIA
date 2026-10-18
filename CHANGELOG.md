@@ -4,6 +4,36 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.3.4] — 2026-10-17
+
+### Alterado
+
+- `frigate_monitor.sh` repontado do QNAP para o **BMax**: API consultada direto
+  por HTTP (`192.168.2.174:5000`), métricas de CPU/load/RAM lidas de `/proc`
+  no host (independente de locale, que no Debian `top` sairia com vírgula),
+  gravações medidas no NFS (`nfs_free_pct`). Cron atualizado para
+  `/home/hal9000/CameraIA/frigate_monitor.sh` (clone canônico, antes apontava
+  para `Projects/CameraIA`, desatualizado).
+- CSV ganhou as colunas `cameras_bad` e `nfs_free_pct`; histórico antigo
+  arquivado como `frigate_monitor.csv.pre-bmax-20261017` (as colunas de CPU
+  mudaram de semântica: `cpu_pct` do BMax, não `cpu_idle_pct` do NAS).
+
+### Adicionado
+
+- Alertas novos: câmera sem `camera_fps` por ~15 min (suspeita de sessão
+  RTSP/encoder do DVR) e NFS de gravações abaixo de 10% livre.
+- Relatório diário com câmeras com fps (mínimo), amostras com câmera muda,
+  detector fps médio/máximo e NFS livre mínimo.
+
+### Validado
+
+- `collect` roda em ~2,5s: CPU 4%, load 0,9, RAM 17%, Frigate up, 4/4 câmeras,
+  `process_fps` 20,3, NFS 70% livre. Alerta de teste entregue no Telegram (msg 492).
+- Fluxo completo conferido no BMax: evento `person` na cam_4 às 21:04:56
+  (score 0.93) publicado em `frigate/events` via MQTT, com clip servido por
+  `/api/events/<id>/clip.mp4`, gravação H.264 960×480 válida no NFS e frame
+  extraído do MP4 mostrando a pessoa detectada.
+
 ## [0.3.3] — 2026-10-17
 
 ### Alterado
