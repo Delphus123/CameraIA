@@ -4,6 +4,17 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.3.9] — 2026-10-18
+
+### Adicionado
+
+- `jellyfin/jellyfin-trickplay-window.sh`: aborta a task "Generate Trickplay
+  Images" do Jellyfin às 05:00 (cron), confinando o trickplay à janela 0h–5h.
+  O trigger diário já inicia ~00:01; a extração é incremental, então o excedente
+  retoma na noite seguinte. Autentica lendo a API key direto do DB
+  (`ApiKeys.AccessToken`, header `Authorization: MediaBrowser Token=` — o
+  `X-Emby-Token` devolve 401). Notifica Telegram em sucesso e falha.
+
 ## [0.3.8] — 2026-10-18
 
 ### Alterado
