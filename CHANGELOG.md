@@ -4,6 +4,20 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.3.8] — 2026-10-18
+
+### Alterado
+
+- **Detector do Frigate CPU→GPU**: OpenVINO passa a inferir na iGPU do N150
+  (`detectors.ov.device: GPU`, iGPU 24EU) para aliviar a CPU. Medido em
+  produção: processo do detector caiu de ~147% para ~17% CPU, load 5min de
+  2,5 → 0,7; 4/4 câmeras a 5fps, detection_fps 5,5, decode VAAPI intacto e sem
+  erros -38. Rollback: `device: CPU` (backup em
+  `/opt/frigate/configdir/config.yml.pre-gpu-20261018`).
+- Config de produção sincronizado no repo: schema `record:` de retenção
+  (alerts/detections 30d, continuous 0, motion 14d), `lpr` e `version 0.18-0`
+  que estavam só no `/opt/frigate/configdir`.
+
 ## [0.3.7] — 2026-10-17
 
 ### Alterado

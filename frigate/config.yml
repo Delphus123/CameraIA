@@ -1,5 +1,5 @@
-# Frigate — TS-453Be + DVR Hikvision DS-7216HQHI-K2 (16ch HDTVI)
-# Piloto: 4 primeiras câmeras. Detector: OpenVINO na iGPU HD 500.
+# Frigate — BMax B4 Turbo (N150, iGPU 24EU) + DVR Hikvision DS-7216HQHI-K2 (16ch HDTVI)
+# Piloto: 4 primeiras câmeras. Detector: OpenVINO na iGPU (device: GPU).
 # Ao adicionar câmera: copiar bloco cam_XX e trocar o N de Channels/N01 e N02.
 
 mqtt:
@@ -21,19 +21,24 @@ model:
 detectors:
   ov:
     type: openvino
-    device: CPU
+    # 18/10/26: detector movido CPU→GPU (iGPU 24EU do N150) p/ aliviar ~0,7-1,5 core da CPU.
+    # Rollback: voltar para device: CPU.
+    device: GPU
 
-# decode por CPU (padrão) — VAAPI na iGPU HD500 compartilhada c/ Jellyfin causava erros -38 intermitentes
+# decode: VAAPI na iGPU (ffmpeg -hwaccel vaapi); fallback p/ CPU se o erro -38 voltar
 
 record:
   enabled: true
-  retain:
-    days: 14
-    mode: motion
-  events:
+  alerts:
     retain:
-      default: 30
-
+      days: 30
+  detections:
+    retain:
+      days: 30
+  continuous:
+    days: 0
+  motion:
+    days: 14
 objects:
   track:
     - person
@@ -45,10 +50,11 @@ cameras:
       output_args:
         record: preset-record-generic
       inputs:
-        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/102
+        - path: 
+            rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/102
           input_args:
-          - -rtsp_transport
-          - tcp
+            - -rtsp_transport
+            - tcp
           roles: [detect, record]
     detect:
       enabled: true
@@ -60,10 +66,11 @@ cameras:
       output_args:
         record: preset-record-generic
       inputs:
-        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/202
+        - path: 
+            rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/202
           input_args:
-          - -rtsp_transport
-          - tcp
+            - -rtsp_transport
+            - tcp
           roles: [detect, record]
     detect:
       enabled: true
@@ -75,10 +82,11 @@ cameras:
       output_args:
         record: preset-record-generic
       inputs:
-        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/302
+        - path: 
+            rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/302
           input_args:
-          - -rtsp_transport
-          - tcp
+            - -rtsp_transport
+            - tcp
           roles: [detect, record]
     detect:
       enabled: true
@@ -90,13 +98,18 @@ cameras:
       output_args:
         record: preset-record-generic
       inputs:
-        - path: rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/402
+        - path: 
+            rtsp://frigate:{FRIGATE_RTSP_PASSWORD}@192.168.2.182:554/Streaming/Channels/402
           input_args:
-          - -rtsp_transport
-          - tcp
+            - -rtsp_transport
+            - tcp
           roles: [detect, record]
     detect:
       enabled: true
       width: 640
       height: 480
       fps: 5
+version: 0.18-0
+lpr:
+  enabled: true
+  enhancement: 2
