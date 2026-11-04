@@ -4,6 +4,15 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.4.3] — 2026-11-04
+
+### Corrigido
+
+- **lpr-exp**: `box` do evento vem NORMALIZADO (frações do frame), não em
+  pixels — o crop saía do tamanho do frame inteiro; agora converte por
+  `MAIN_W/H`, com margem 25% e teto de 800 px no lado do crop. CSV coerced
+  para str (crash com ints nos 2 primeiros eventos).
+
 ## [0.4.2] — 2026-11-04
 
 ### Adicionado

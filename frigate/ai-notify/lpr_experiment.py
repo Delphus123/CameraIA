@@ -56,7 +56,7 @@ def csv_row(cols: list[str]):
         with open(f"{DATA_DIR}/results.csv", "a") as f:
             if new:
                 f.write("ts,event_id,duration_s,box_detect,crop_main,frames,sharpness,ocr_raw,plate\n")
-            f.write(",".join(c.replace(",", ";") for c in cols) + "\n")
+            f.write(",".join(str(c).replace(",", ";") for c in cols) + "\n")
 
 
 def grab_frames(start_local: str, duration: int, workdir: str) -> int:
@@ -121,14 +121,20 @@ def handle_event(after: dict):
         csv_row([time.strftime("%F %T"), event_id, duration, "n/a", "n/a", 0, "", "", ""])
         return
 
-    box = (after.get("data") or {}).get("box") or [0, 0, DETECT_W, DETECT_H]
-    x, y, w, h = box
-    sx, sy = MAIN_W / DETECT_W, MAIN_H / DETECT_H
-    px, py = int(w * sx * 0.25), int(h * sy * 0.25)   # margem 25%
-    box_main = (max(0, int(x * sx) - px), max(0, int(y * sy) - py),
-                int(w * sx) + 2 * px, int(h * sy) + 2 * py)
-    box_main = (box_main[0], box_main[1],
-                min(box_main[2], MAIN_W - box_main[0]), min(box_main[3], MAIN_H - box_main[1]))
+    box = (after.get("data") or {}).get("box") or [0.7, 0.2, 0.1, 0.1]
+    # box vem NORMALIZADO (frações do frame): [x, y, w, h]
+    bx, by, bw, bh = box
+    x, y = int(bx * MAIN_W), int(by * MAIN_H)
+    w, h = int(bw * MAIN_W), int(bh * MAIN_H)
+    px, py = max(20, int(w * 0.25)), max(20, int(h * 0.25))   # margem 25%
+    x, y = max(0, x - px), max(0, y - py)
+    w, h = min(w + 2 * px, MAIN_W - x), min(h + 2 * py, MAIN_H - y)
+    # teto no crop: se o box for gigante, recorta no máximo em volta do centro
+    if w > 800 or h > 800:
+        cx, cy = x + w // 2, y + h // 2
+        w = min(w, 800); h = min(h, 800)
+        x = max(0, min(cx - w // 2, MAIN_W - w)); y = max(0, min(cy - h // 2, MAIN_H - h))
+    box_main = (x, y, w, h)
 
     best, best_score = None, -1.0
     for f in sorted(os.listdir(workdir)):
