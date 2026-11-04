@@ -4,6 +4,23 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.4.2] — 2026-11-04
+
+### Adicionado
+
+- **Experimento LPR 24h** (`frigate/ai-notify/lpr_experiment.py`, container
+  `lpr-exp`): no fim de cada evento `car` na cam_2, um playback RTSP único
+  (`Streaming/tracks/201`) puxa da gravação main 1920×1536 do DVR ~6 frames
+  da janela do evento; escolhe o de carro mais nítido (box final escalado +
+  variância de bordas), faz crop 4× e tenta ler a placa com o Moondream.
+  Resultados em `/opt/frigate/lpr-exp/results.csv` + frames; alerta
+  `[EXPERIMENTAL]` no Telegram somente se a placa casar Mercosul/antiga.
+  Pré-requisitos validados 04/11/26: relógio do DVR corrigido (em sync c/
+  BMax), playback RTSP do HD funcional (downtime de teste: 23 s), main
+  confirmado H.264 1920×1536@15fps. Placa de carro longe ≈ 30-35 px no main
+  (abaixo dos 60-100 px de OCR confiável) — experimento mede a taxa real de
+  leitura em 24h de tráfego.
+
 ## [0.4.1] — 2026-11-04
 
 ### Alterado
