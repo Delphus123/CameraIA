@@ -12,7 +12,11 @@ services:
       - MQTT_HOST=mqtt
       - OLLAMA_URL=http://ollama-vlm:11434
       - GENAI_MODEL=moondream
-      - LABELS=person,car,motorcycle
+      # Fase de monitoramento: só cam_1/cam_2 (decisão Rafael 04/11/26).
+      # Car fora dos LABELS: carros parados geravam alerta sem valor; placa não é
+      # legível na sub-stream 960x480 da cam_2 (~10px, precisa 60-100px p/ OCR).
+      - CAMERAS=cam_1,cam_2
+      - LABELS=person,motorcycle
       - COOLDOWN=300
     networks: [frigate_default]
 

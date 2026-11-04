@@ -4,6 +4,18 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.4.1] — 2026-11-04
+
+### Alterado
+
+- **ai-notify restrito a cam_1/cam_2** (`CAMERAS=cam_1,cam_2`) — fase de
+  monitoramento decidida pelo Rafael.
+- **Car removido dos alertas** (`LABELS=person,motorcycle`): carros parados
+  geravam notificação sem valor. Veredito técnico anexado ao config: placa de
+  carro em movimento na cam_2 ocupa ~10 px na sub-stream 960×480 (zoom real
+  medido) — OCR de placa precisa de ~60–100 px; leitura de placa exigirá
+  main stream (ou câmera dedicada de LPR) no futuro.
+
 ## [0.4.0] — 2026-11-04
 
 ### Adicionado
