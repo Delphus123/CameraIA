@@ -6,6 +6,14 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 ## [0.4.3] — 2026-11-04
 
+### Documentado
+
+- `docs/lpr-cam-recomendacao.md`: recomendação registrada de câmera LPR via
+  coaxial para futuro ponto de leitura de placas — DS-2CE16H8-TIT3Z (5MP TVI
+  varifocal 2.8-12mm, ~R$ 400-600), com plano de instalação, alternativas
+  avaliadas (DS-TCG405/406-E ANPR embarcado; captura TVI 1080p de terceiros;
+  TVI box + C-mount) e limitações medidas da cam_2 atual.
+
 ### Corrigido
 
 - **lpr-exp**: `box` do evento vem NORMALIZADO (frações do frame), não em
