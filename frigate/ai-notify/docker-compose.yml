@@ -1,0 +1,21 @@
+# Bridge Frigate -> Telegram (descrições GenAI do Moondream, em inglês).
+# Token do bot NUNCA no repo: fica em /opt/frigate/ai-notify.env (chmod 600).
+services:
+  ai-notify:
+    build: .
+    image: cameraia/ai-notify:latest
+    container_name: ai-notify
+    restart: unless-stopped
+    env_file: /opt/frigate/ai-notify.env
+    environment:
+      - FRIGATE_API=http://frigate:5000
+      - MQTT_HOST=mqtt
+      - OLLAMA_URL=http://ollama-vlm:11434
+      - GENAI_MODEL=moondream
+      - LABELS=person,car,motorcycle
+      - COOLDOWN=300
+    networks: [frigate_default]
+
+networks:
+  frigate_default:
+    external: true

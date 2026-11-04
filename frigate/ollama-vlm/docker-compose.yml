@@ -1,0 +1,28 @@
+# Ollama local p/ GenAI do Frigate (Moondream). N150 CPU-only, keep_alive=0.
+# Volume nomeado 'ollama-vlm' (external) guarda os modelos baixados (~5 GB).
+services:
+  ollama-vlm:
+    image: ollama/ollama:latest
+    container_name: ollama-vlm
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:11435:11434"   # só loopback do host (testes/Hermes)
+    environment:
+      # keep_alive 5m: modelo fica residente ~3.5 GB (reload por evento custaria ~1 min
+      # de load no CPU); descarrega sozinho após o período ocioso.
+      - OLLAMA_KEEP_ALIVE=5m
+      # Load de modelo multimodal com ctx 16k no N150 demora >5min sob concorrência.
+      - OLLAMA_LOAD_TIMEOUT=10m
+      # Frigate envia até 10 thumbnails (>2048 tokens); cap server-side de contexto.
+      - OLLAMA_CONTEXT_LENGTH=8192
+    volumes:
+      - ollama-vlm:/root/.ollama
+    networks: [frigate_default]
+
+networks:
+  frigate_default:
+    external: true
+
+volumes:
+  ollama-vlm:
+    external: true

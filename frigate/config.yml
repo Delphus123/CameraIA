@@ -39,10 +39,44 @@ record:
     days: 0
   motion:
     days: 14
+
+# GenAI local: Ollama no container ollama-vlm (mesma rede frigate_default).
+# Papel apenas 'descriptions' — sem chat/embeddings (N150 não aguenta embeddings locais).
+genai:
+  local-ollama:
+    provider: ollama
+    base_url: http://ollama-vlm:11434
+    # qwen25vl-bmax = qwen2.5vl:3b + PARAMETER num_ctx 16384 (Modelfile no ollama-vlm).
+    # Moondream descartado: contexto nativo 2048 não absorve as sequências de
+    # thumbnails do Frigate (2233-7336 tokens medidos).
+    model: qwen25vl-bmax
+    roles: [descriptions]
 objects:
   track:
     - person
     - car
+    - motorcycle
+  genai:
+    # 04/11/26: GenAI nativo do Frigate DESLIGADO — o bridge ai-notify faz o papel
+    # (alerta imediato + descrição via Ollama com snapshot único). Motivos medidos:
+    # sequências de thumbnails = 2.2-7.3k tokens (moondream: ctx 2048 insuficiente;
+    # qwen2.5vl:3b: 3-10 min no N150 > timeout 120s do cliente do Frigate).
+    # Rollback: enabled: true + model no genai (bloco de provider documentado abaixo).
+    enabled: false
+    objects: [person, car, motorcycle]
+    use_snapshot: false
+    prompt: >-
+      Describe this security camera snapshot concisely: what is visible, what the {label}
+      is doing, and notable details (clothing, objects, vehicles). Plain English, max 2 sentences.
+
+# Snapshots: exigidos pelo bridge ai-notify (descrição GenAI + foto no Telegram).
+# bounding_boxes/timestamp off: texto queimado na imagem desvia o Moondream
+# (ele "lê" o OSD e entra em loop de repetição — medido 04/11/26).
+snapshots:
+  enabled: true
+  quality: 80
+  bounding_box: false
+  timestamp: false
 
 cameras:
   cam_1:

@@ -4,6 +4,33 @@ Formato: [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/), versioname
 
 > Histórico anterior (Fase 0–1: piloto 4 câmeras, gravação main H.264, fix do modelo 300x300) precede este changelog — ver `git log`.
 
+## [0.4.0] — 2026-11-04
+
+### Adicionado
+
+- **Alertas de evento no Telegram com descrição GenAI local** (`frigate/ai-notify/`):
+  bridge MQTT→Telegram que, no fim de cada evento `person`/`car`/`motorcycle`,
+  envia a foto do snapshot imediatamente e a descrição em inglês (decisão do
+  Rafael) como mensagem de acompanhamento, gerada pelo Moondream no Ollama
+  local (`frigate/ollama-vlm/docker-compose.yml`, container `ollama-vlm`,
+  rede `frigate_default`, API só em loopback no host :11435). Cooldown de
+  300 s por câmera+label; token do bot em `/opt/frigate/ai-notify.env`
+  (chmod 600, fora do repo). Token budget medido: snapshot único ≈ 900 tokens
+  (cabe no contexto nativo 2048 do Moondream); descrição em ~35 s no N150,
+  pico 738 MiB RAM.
+- `snapshots.enabled: true` no Frigate (qualidade 80) — exigido pelo bridge
+  (foto + snapshot do evento).
+
+### Alterado
+
+- `objects.track`: sincronizado com produção (adicionado `motorcycle`, que
+  estava só no config deployado via UI).
+- GenAI nativo do Frigate avaliado e **mantido desligado** (`objects.genai.
+  enabled: false`): sequências de thumbnails geram 2.2–7.3k tokens — acima do
+  contexto nativo do Moondream (2048) e acima do timeout de 120 s do cliente
+  Frigate com Qwen2.5-VL-3B no N150 (3–10 min de inferência). Benchmarks
+  documentados nos comentários do config; rollback documentado inline.
+
 ## [0.3.10] — 2026-10-18
 
 ### Alterado
